@@ -2,9 +2,19 @@ cmake_minimum_required(VERSION 3.27)
 
 project(MyReLu CXX CUDA)
 
+execute_process(
+    COMMAND
+        ${Python_EXECUTABLE} -c
+            "import torch.utils; print(torch.utils.cmake_prefix_path)"
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    OUTPUT_VARIABLE DCMAKE_PREFIX_PATH)
+
+set(CMAKE_PREFIX_PATH "${DCMAKE_PREFIX_PATH}")
+
 # if you have python and pytorch installed in a non-standard location, you can use this to find them
 find_package(Python REQUIRED COMPONENTS Development)
 find_package(Torch REQUIRED)
+find_library(TORCH_PYTHON_LIBRARY torch_python PATHS "${TORCH_INSTALL_PREFIX}/lib")
 
 # Modify if you need a different default value
 if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
